@@ -8,6 +8,7 @@ from bl.vl.utils import get_logger
 from bl.vl.utils.ome_utils import ome_hash
 from bl.vl.utils.graph import build_edge_id
 import bl.vl.kb.events as events
+from bl.vl.kb import UnknownVIDError
 from bl.vl.graph.errors import DependencyTreeError, MissingEdgeError,\
     MissingNodeError, GraphOutOfSyncError, GraphAuthenticationError, \
     GraphConnectionError, GraphEngineConfigurationError
@@ -359,4 +360,10 @@ class Neo4JDriver(object):
                       query_depth=None):
         connected_nodes_infos = self.get_connected_infos(obj, aklass, direction,
                                                          query_depth)
-        return [self.__get_ome_obj_by_info__(cni) for cni in connected_nodes_infos]
+        connected_nodes = []
+        for cni in connected_nodes_infos:
+            try:
+                connected_nodes.append(self.__get_ome_obj_by_info__(cni))
+            except UnknownVIDError:
+                self.logger.warning('Unable to map VID "%s"' % cni['object_id'])
+        return connected_nodes

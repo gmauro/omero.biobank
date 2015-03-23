@@ -12,7 +12,7 @@ import bl.vl.kb.config as blconf
 from bl.vl.kb.messages import get_events_sender
 from bl.vl.kb.dependency import DependencyTree
 from bl.vl.kb import mimetypes
-from bl.vl.kb import KBPermissionError, KBError
+from bl.vl.kb import KBPermissionError, KBError, UnknownVIDError
 
 from proxy_core import ProxyCore
 from wrapper import ObjectFactory, MetaWrapper
@@ -163,7 +163,7 @@ class Proxy(ProxyCore):
     params = {"vid": vid}
     res = self.find_all_by_query(query, params)
     if len(res) != 1:
-      raise ValueError("%d kb objects map to %s" % (len(res), vid))
+      raise UnknownVIDError("%d kb objects map to %s" % (len(res), vid))
     return res[0]
 
   def get_by_field(self, klass, field_name, values, batch_size=240):

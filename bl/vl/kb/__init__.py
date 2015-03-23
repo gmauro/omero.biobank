@@ -32,6 +32,10 @@ class KBPermissionError(Exception):
   pass
 
 
+class UnknownVIDError(Exception):
+    pass
+
+
 class Study(object):
   def __init__(self):
     raise NotImplementedError
