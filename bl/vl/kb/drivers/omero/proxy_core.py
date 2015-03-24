@@ -348,10 +348,15 @@ class ProxyCore(object):
       self.admin.move_to_common_space([obj])
     return obj
 
-  def save_array(self, array):
+  def save_array(self, array, move_to_common_space=False):
     """
-    Save and return an array of KB objects.
+    Save and return an array of KB objects. If *move_to_common_space* is True, automatically move the saved
+    objects in the public data pool.
     """
+    if move_to_common_space and not self.is_group_leader():
+      raise kb.KBPermissionError('User %s is not group owner and cannot move '
+                                 'saved objects to common space, aborting save'
+                                 % self.user)
     update = [obj.is_mapped() for obj in array]
     try:
       result = self.ome_operation("getUpdateService", "saveAndReturnArray",
@@ -368,6 +373,8 @@ class ProxyCore(object):
       o.__dump_to_graph__(u)
       if self.context_managers:
         self.context_managers[-1].register(o)
+    if move_to_common_space:
+      self.admin.move_to_common_space(array)
     return array
 
   def delete(self, kb_obj):

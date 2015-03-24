@@ -85,7 +85,7 @@ class Recorder(core.Core):
     self.batch_size = batch_size
     self.action_setup_conf = action_setup_conf
 
-  def record(self, records, otsv, rtsv, blocking_validation):
+  def record(self, records, otsv, rtsv, blocking_validation, moving_to_cs):
     def records_by_chunk(batch_size, records):
       offset = 0
       while len(records[offset:]) > 0:
@@ -118,7 +118,7 @@ class Recorder(core.Core):
       asetup[acts] = self.kb.save(setup)
     for i, c in enumerate(records_by_chunk(self.batch_size, records)):
       self.logger.info('start processing chunk %d' % i)
-      self.process_chunk(otsv, c, study, asetup, device)
+      self.process_chunk(otsv, c, study, asetup, device, moving_to_cs)
       self.logger.info('done processing chunk %d' % i)
 
   def find_source_klass(self, records):
@@ -259,7 +259,7 @@ class Recorder(core.Core):
     self.logger.info('done consistency checks')
     return good_records, bad_records
 
-  def process_chunk(self, otsv, chunk, study, asetup, device):
+  def process_chunk(self, otsv, chunk, study, asetup, device, moving_to_cs):
     aklass = {
       self.kb.Individual: self.kb.ActionOnIndividual,
       self.kb.Tube: self.kb.ActionOnVessel,
@@ -321,7 +321,7 @@ class Recorder(core.Core):
       self.logger.debug(conf)
       vessels.append(self.kb.factory.create(self.vessel_klass, conf))
     assert len(vessels) == len(chunk)
-    self.kb.save_array(vessels)
+    self.kb.save_array(vessels, moving_to_cs)
     for v in vessels:
       otsv.writerow({
         'study': study.label,
@@ -447,7 +447,7 @@ def implementation(logger, host, user, passwd, args, close_handles):
     try:
       logger.info('Dumping %d records with study %s as reference', len(records), study_label)
       recorder.record(records, o, report,
-                      args.blocking_validator)
+                      args.blocking_validator, args.move_to_common_space)
     except core.ImporterValidationError as ve:
       recorder.logger.critical(ve.message)
       close_handles(args)
