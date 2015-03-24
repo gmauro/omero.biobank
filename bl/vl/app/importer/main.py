@@ -85,6 +85,8 @@ class App(object):
                         help='operator identifier', required=True)
     parser.add_argument('--blocking-validator', action='store_true',
                         help='break if there is at least one invalid record')
+    parser.add_argument('--move-to-common-space', action='store_true',
+                        help='move objects to the common space')
     parser.add_argument('-K', '--keep-tokens', type=int,
                         default=1, help='OMERO tokens for open session')
     subparsers = parser.add_subparsers()
