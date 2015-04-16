@@ -83,6 +83,15 @@ class GalaxyWrapper(object):
             return False
         return True
 
+    def __create_library(self, name):
+        self.logger.debug('Creating library with name %s', name)
+        lib_details = self.gi.libraries.create_library(name)
+        if not lib_details:
+            raise RuntimeError("Error creating library with name %s", name)
+        self.logger.debug('Library ID %s', lib_details['id'])
+        return lib_details['id']
+
+
     def __get_or_create_library(self, name):
         self.logger.debug('Loading library with name %s', name)
         lib_details = self.gi.libraries.get_libraries(name=name)
@@ -257,7 +266,7 @@ class GalaxyWrapper(object):
         history_dataset = self.__dump_history_details(history)
         dsamples_dataset, dobjects_dataset = self.__dump_ds_do_datasets(items,
                                                                         action_context)
-        lib_id = self.__get_or_create_library(self.__get_library_name('import_datasets'))
+        lib_id = self.__create_library(self.__get_library_name('import_datasets'))
         folder_id = self.__create_folder('dataset_import', lib_id)
         hdset_id = self.__upload_to_library(history_dataset, lib_id, folder_id)
         dsset_id = self.__upload_to_library(dsamples_dataset, lib_id, folder_id)
@@ -307,7 +316,7 @@ class GalaxyWrapper(object):
     def run_flowcell_from_samplesheet_import(self, samplesheet_data, action_context, namespace=None):
         self.logger.info('Running flowcell samplesheet import')
         conf_params = self.__dump_config_params(action_context, namespace)
-        lib_id = self.__get_or_create_library(self.__get_library_name('import_flowcell'))
+        lib_id = self.__create_library(self.__get_library_name('import_flowcell'))
         folder_id = self.__create_folder('flowcell_from_samplesheet', lib_id)
         samplesheet_id = self.__upload_to_library(samplesheet_data, lib_id, folder_id)
         conf_file_id = self.__upload_to_library(conf_params, lib_id, folder_id)
