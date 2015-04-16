@@ -252,7 +252,7 @@ class GalaxyWrapper(object):
     # automatically selects proper workflow by checking object type
     # of 'items' elements
     def run_datasets_import(self, history, items, action_context,
-                            no_dataobjects=False, async=False):
+                            no_dataobjects=False):
         self.logger.info('Running datasets import')
         history_dataset = self.__dump_history_details(history)
         dsamples_dataset, dobjects_dataset = self.__dump_ds_do_datasets(items,
@@ -293,23 +293,18 @@ class GalaxyWrapper(object):
         hist_details = self.__run_workflow(self.__get_workflow_id(wf_conf['label']),
                                            ds_map, 'seq_datasets_import')
         self.logger.info('Workflow running')
-        if async:
-            self.logger.info('Enabled async run, returning')
-            return hist_details
+        self.logger.info('Waiting for run exit status')
+        status = self.__wait(hist_details['history'])
+        if status == 'ok':
+            self.logger.info('Run completed')
+            return hist_details, lib_id
         else:
-            self.logger.info('Waiting for run exit status')
-            status = self.__wait(hist_details['history'])
-            if status == 'ok':
-                self.logger.info('Run completed')
-                return hist_details, lib_id
-            else:
-                msg = 'Error occurred while processing data'
-                self.logger.error(msg)
-                raise RuntimeError(msg)
+            msg = 'Error occurred while processing data'
+            self.logger.error(msg)
+            raise RuntimeError(msg)
 
     # Import a flowcell samplesheet produced by a Galaxy NGLIMS within OMERO.biobank
-    def run_flowcell_from_samplesheet_import(self, samplesheet_data, action_context, namespace=None,
-                             async=False):
+    def run_flowcell_from_samplesheet_import(self, samplesheet_data, action_context, namespace=None):
         self.logger.info('Running flowcell samplesheet import')
         conf_params = self.__dump_config_params(action_context, namespace)
         lib_id = self.__get_or_create_library(self.__get_library_name('import_flowcell'))
@@ -325,19 +320,15 @@ class GalaxyWrapper(object):
         hist_details = self.__run_workflow(self.__get_workflow_id(wf_conf['label']),
                                            ds_map, 'flowcell_samplesheet_import')
         self.logger.info('Workflow running')
-        if async:
-            self.logger.info('Enabled async run, returning')
-            return hist_details
+        self.logger.info('Waiting for run exit status')
+        status = self.__wait(hist_details['history'])
+        if status == 'ok':
+            self.logger.info('Run completed')
+            return hist_details, lib_id
         else:
-            self.logger.info('Waiting for run exit status')
-            status = self.__wait(hist_details['history'])
-            if status == 'ok':
-                self.logger.info('Run completed')
-                return hist_details, lib_id
-            else:
-                msg = 'Error occurred while processing data'
-                self.logger.error(msg)
-                raise RuntimeError(msg)
+            msg = 'Error occurred while processing data'
+            self.logger.error(msg)
+            raise RuntimeError(msg)
 
     def delete_history(self, history_id, purge_history=False):
         self.logger.info('Deleting history with ID %s', history_id)

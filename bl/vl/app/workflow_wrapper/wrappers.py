@@ -3,7 +3,7 @@ from galaxy_wrapper import GalaxyWrapper
 
 
 def run_datasets_import(history, items, action_context, no_dataobjects=False,
-                        async=False, driver='galaxy', conf=None,
+                        driver='galaxy', conf=None,
                         delete_history=False, purge_history=False,
                         logger=None):
     if not logger:
@@ -24,11 +24,11 @@ def run_datasets_import(history, items, action_context, no_dataobjects=False,
         gw = GalaxyWrapper(conf, logger)
         logger.info('Start import of dataset')
         history_details, library_id = gw.run_datasets_import(history, items, action_context,
-                                                             no_dataobjects, async)
+                                                             no_dataobjects)
         logger.info('Import completed. HISTORY_ID: %s --- LIBRARY_ID: %s', history_details['history'],
                     library_id)
-        logger.info('DELETE_HISTORY: %s --- ASYNC: %s', delete_history, async)
-        if delete_history and not async:
+        logger.info('DELETE_HISTORY: %s ', delete_history)
+        if delete_history:
             logger.info('Deleting history and library')
             gw.delete_history(history_details['history'], purge_history)
             gw.delete_library(library_id)
@@ -40,7 +40,7 @@ def run_datasets_import(history, items, action_context, no_dataobjects=False,
 
 
 def run_flowcell_from_samplesheet_import(samplesheet_data, action_context,
-                                         namespace = None, async = False,
+                                         namespace = None,
                                          driver = 'galaxy', conf = None,
                                          delete_history = False, purge_history = False,
                                          logger = None):
@@ -50,11 +50,11 @@ def run_flowcell_from_samplesheet_import(samplesheet_data, action_context,
         gw = GalaxyWrapper(conf, logger)
         logger.info('Start import of flowcell')
         history_details, library_id = gw.run_flowcell_from_samplesheet_import(samplesheet_data, action_context,
-                                                                              namespace, async)
+                                                                              namespace)
         logger.info('Import completed. HISTORY_ID: %s --- LIBRARY_ID: %s', history_details['history'],
                     library_id)
-        logger.info('DELETE_HISTORY: %s --- ASYNC: %s', delete_history, async)
-        if delete_history and not async:
+        logger.info('DELETE_HISTORY: %s', delete_history)
+        if delete_history:
             logger.info('Deleting history and library')
             gw.delete_history(history_details['history'], purge_history)
             gw.delete_library(library_id)
