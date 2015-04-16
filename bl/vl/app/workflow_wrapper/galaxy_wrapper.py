@@ -246,7 +246,7 @@ class GalaxyWrapper(object):
         return yaml.dump(config_dict, default_flow_style=False)
 
     def __get_library_name(self, lname_prefix):
-        return '%s-%s' % (lname_prefix, datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+        return '%s-%s' % (lname_prefix, datetime.now().strftime('%Y-%m-%d_%H:%M:%S.%f'))
 
     # Import DataSamples and DataObjects within OMERO.biobank,
     # automatically selects proper workflow by checking object type
