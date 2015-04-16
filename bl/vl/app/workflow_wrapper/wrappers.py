@@ -4,8 +4,7 @@ from galaxy_wrapper import GalaxyWrapper
 
 def run_datasets_import(history, items, action_context, no_dataobjects=False,
                         driver='galaxy', conf=None,
-                        delete_history=False, purge_history=False,
-                        logger=None):
+                        keep_tmp = False, logger=None):
     if not logger:
         logger = get_logger("dataset_import", level='INFO')
     # Consistency check for items
@@ -27,10 +26,10 @@ def run_datasets_import(history, items, action_context, no_dataobjects=False,
                                                              no_dataobjects)
         logger.info('Import completed. HISTORY_ID: %s --- LIBRARY_ID: %s', history_details['history'],
                     library_id)
-        logger.info('DELETE_HISTORY: %s ', delete_history)
-        if delete_history:
+        logger.info('keep_tmp: %s ', keep_tmp)
+        if not keep_tmp:
             logger.info('Deleting history and library')
-            gw.delete_history(history_details['history'], purge_history)
+            gw.delete_history(history_details['history'], True)
             gw.delete_library(library_id)
             logger.info('Deletion completed')
     else:
@@ -42,7 +41,7 @@ def run_datasets_import(history, items, action_context, no_dataobjects=False,
 def run_flowcell_from_samplesheet_import(samplesheet_data, action_context,
                                          namespace = None,
                                          driver = 'galaxy', conf = None,
-                                         delete_history = False, purge_history = False,
+                                         keep_tmp = False,
                                          logger = None):
     if not logger:
         logger = get_logger("flowcell_import", level='INFO')
@@ -53,10 +52,10 @@ def run_flowcell_from_samplesheet_import(samplesheet_data, action_context,
                                                                               namespace)
         logger.info('Import completed. HISTORY_ID: %s --- LIBRARY_ID: %s', history_details['history'],
                     library_id)
-        logger.info('DELETE_HISTORY: %s', delete_history)
-        if delete_history:
+        logger.info('keep_tmp: %s', keep_tmp)
+        if not keep_tmp:
             logger.info('Deleting history and library')
-            gw.delete_history(history_details['history'], purge_history)
+            gw.delete_history(history_details['history'], True)
             gw.delete_library(library_id)
             logger.info('Deletion completed')
     else:
