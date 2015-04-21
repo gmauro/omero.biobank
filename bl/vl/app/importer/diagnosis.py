@@ -24,7 +24,7 @@ from version import version
 
 
 # FIXME This should be defined somewhere else
-LEGAL_TERMINOLOGIES = ['icd10-cm']
+LEGAL_TERMINOLOGIES = ['icd10', 'icd10-cm']
 
 
 class Recorder(core.Core):
