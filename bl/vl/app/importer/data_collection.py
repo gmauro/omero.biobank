@@ -80,8 +80,10 @@ class Recorder(core.Core):
     self.preload_data_collections()
     asetup = self.get_action_setup('importer.data_collection-%f' % time.time(),
                                    json.dumps(self.action_setup_conf))
+    asetup.unload()
     device = self.get_device('importer-%s.data_collection' % version,
                              'CRS4', 'IMPORT', version)
+    device.unload()
     conf = {
       'setup': asetup,
       'device': device,
@@ -90,6 +92,7 @@ class Recorder(core.Core):
       'context': study,
       }
     action = self.kb.factory.create(self.kb.Action, conf).save()
+    action.unload()
     def keyfunc(r): return r['label']
     sub_records = []
     data_collections = {}
