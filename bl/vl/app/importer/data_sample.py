@@ -57,6 +57,7 @@ SUPPORTED_SOURCES = [
   'DataCollectionItem',
   'IlluminaBeadChipArray',
   'IlluminaBeadChipMeasures',
+  'VLCollection'
   ]
 SUPPORTED_DEVICES = [
   'Device',
