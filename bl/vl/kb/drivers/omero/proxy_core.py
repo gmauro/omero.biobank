@@ -120,6 +120,7 @@ class ProxyCore(object):
   def __init__(self, host, user, passwd, group=None, session_keep_tokens=1,
                check_ome_version=True):
     self.logger = get_logger('bl.vl.kb.drivers.omero.proxy_core')
+    self.hostname = host
     self.user = user
     self.passwd = passwd
     self.group_name = group
