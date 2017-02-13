@@ -16,8 +16,6 @@
 import argparse, sys, os
 
 import omero
-import omero_ServerErrors_ice
-
 
 PATH = os.path.abspath(__file__)
 BIOBANK_ROOT = os.path.dirname(PATH)
